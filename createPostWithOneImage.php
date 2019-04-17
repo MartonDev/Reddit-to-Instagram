@@ -8,28 +8,19 @@
 
   $redditName = "pewdiepiesubmissions"; //r name here. for e.g.: reddit.com/r/pewdiepiesubmissions => pewdiepiesubmissions
   $sorting = "hot"; //the way of sorting posts. can be: hot | new | top | controversial | rising
-  $postsLimit = 5; //how many posts you want to make, max. 10
+  $postsLimit = 1; //how many posts you want to make, max. 10, but in this case we have to get 1
   $removePinned = true; //remove pinned posts if sorting by hot
 
   $posts = $functions->getPosts($redditName, $sorting, $postsLimit, $removePinned); //getting an array of posts. by default reddit returns pinned/stickied posts on top of the requested amount of posts, if the sorting is set to hot. we remove those posts if the $removePinned is true
 
-  $credits = ""; //we strongly suggest you crediting the original authors
-  $imagesResource = array();
-
-  for($i = 0; $i < count($posts); $i++) {
-
-    $credits .= "u/" . $posts[$i]["author"] . "\n";
-    $file = array();
-    $file["type"] = "photo"; //for instagram API
-    $file["file"] = "tmpImgs/" . $functions->cutImageToInstagramResolution($posts[$i]["url"]) . ".jpg"; //temporary image, we'll delete it later
-
-    array_push($imagesResource, $file);
-
-  }
+  $postImage = "tmpImgs/" . $functions->cutImageToInstagramResolution($posts[0]["url"]) . ".jpg"; //temporary image, we'll delete it later
+  $credits = "u/" . $posts[0]["author"] . "\n"; //we strongly suggest you crediting the original author
+  $topComment = $functions->getCommentsForPost($redditName, $posts[0]["id"])[0]["data"]["body"]; //we can use the top comment to this reddit post as a caption for instagram
 
   try {
 
-    $ig->timeline->uploadAlbum($imagesResource, ['caption' => "The caption of the post\n-\n-\nCredits:\n" . $credits . "#hastag"]); //upload with caption etc
+    $photo = new \InstagramAPI\Media\Photo\InstagramPhoto($postImage);
+    $ig->timeline->uploadPhoto($photo->getFile(), ['caption' => $topComment . "\n-\nCredits:\n" . $credits . "\n#hastag"]);
 
   }catch (\Exception $e) {
 
