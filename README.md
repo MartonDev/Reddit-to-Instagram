@@ -12,4 +12,4 @@ Repository credits:
 You should credit:  
 -To the users who have made the original posts  
 
-#### Please contact me if you are a copyright owner of any content used in this project want this repository to be removed
+#### Please contact me if you are a copyright owner of any content used in this project and want this repository to be removed
