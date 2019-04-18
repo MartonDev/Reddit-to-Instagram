@@ -28,7 +28,7 @@
     }
 
     /*
-    Resizes images and puts a black background behind them to fit in Instagram posts
+    Rescales images and puts a black background behind them to fit in Instagram posts
     Returns a temporary location on the server. You will have to delete it afterwards (we provided a deleting example)
     */
 
@@ -42,6 +42,28 @@
       $copyHeight = getimagesize($imageURL)[1] > getimagesize($imageURL)[0] ? 980 : getimagesize($imageURL)[1] / 100 * (980 / getimagesize($imageURL)[0] * 100);
 
       imagecopyresized($background, $imageLayer, (1080 / 2) - ($copyWidth / 2), (1080 / 2) - ($copyHeight / 2), 0, 0, $copyWidth, $copyHeight, getimagesize($imageURL)[0], getimagesize($imageURL)[1]);
+
+      imagejpeg($background, "tmpImgs/" . $tmpFilename . ".jpg", 100);
+
+      return $tmpFilename;
+
+    }
+
+    /*
+    Rescales images and puts a black background behind them to fit in Instagram stories
+    Returns a temporary location on the server. You will have to delete it afterwards (we provided a deleting example)
+    */
+
+    public function cutImageToInstagramStoryResolution($imageURL) {
+
+      $background = imagecreatetruecolor(1080, 1920);
+      $imageLayer = $this->imagecreatefromfile($imageURL);
+      $tmpFilename = $this->generateRandomString(10);
+
+      $copyWidth = 980;
+      $copyHeight = (getimagesize($imageURL)[1] / 100) * ((980 / getimagesize($imageURL)[0]) * 100);
+
+      imagecopyresized($background, $imageLayer, (1080 / 2) - ($copyWidth / 2), (1920 / 2) - ($copyHeight / 2), 0, 0, $copyWidth, $copyHeight, getimagesize($imageURL)[0], getimagesize($imageURL)[1]);
 
       imagejpeg($background, "tmpImgs/" . $tmpFilename . ".jpg", 100);
 
